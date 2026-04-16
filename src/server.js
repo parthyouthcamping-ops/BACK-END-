@@ -67,7 +67,7 @@ app.use('/api/reviews', reviewRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', version: '2.0.0', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', version: '2.0.2', timestamp: new Date().toISOString() });
 });
 
 // @desc    Full system seed (Pages + Trips)
@@ -77,6 +77,7 @@ app.get('/api/dev/seed', async (req, res) => {
     const Page = require('./models/Page');
     const Trip = require('./models/Trip');
 
+    // 1. Create System Pages
     const pages = [
       { title: 'Home', slug: 'home', status: 'published', isSystem: true, sections: [{ id: 'hero-1', type: 'hero', data: { title: 'Adventure Awaits' } }] },
       { title: 'Tours', slug: 'tours', status: 'published', isSystem: true, sections: [{ id: 'grid-1', type: 'trip-grid', data: {} }] }
@@ -86,16 +87,35 @@ app.get('/api/dev/seed', async (req, res) => {
       await Page.findOneAndUpdate({ slug: p.slug }, p, { upsert: true });
     }
 
+    // 2. Import Trips with unique slugs and required description
     const tripsData = [
-       { title: "Manali Kasol Amritsar", location: "Manali", duration: "9 Days", price: 11999, category: "adventure", status: "published" },
-       { title: "Winter Spiti Trip", location: "Spiti", duration: "10 Days", price: 19999, category: "road-trip", status: "published" }
+       { 
+         title: "Manali Kasol Amritsar", 
+         slug: "manali-kasol-amritsar-backpacking", 
+         location: "Manali", 
+         duration: "9 Days", 
+         price: 11999, 
+         category: "adventure", 
+         status: "published", 
+         description: "A thrilling journey through the Himalayas." 
+       },
+       { 
+         title: "Winter Spiti Trip", 
+         slug: "winter-spiti-road-trip", 
+         location: "Spiti", 
+         duration: "10 Days", 
+         price: 19999, 
+         category: "road-trip", 
+         status: "published", 
+         description: "An epic winter expedition in the Spiti Valley." 
+       }
     ];
 
     for (const t of tripsData) {
-      await Trip.findOneAndUpdate({ title: t.title }, t, { upsert: true });
+      await Trip.findOneAndUpdate({ slug: t.slug }, t, { upsert: true });
     }
 
-    res.json({ success: true, message: 'Production data seeded successfully v2' });
+    res.json({ success: true, message: 'Production data seeded successfully v2.0.2' });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
