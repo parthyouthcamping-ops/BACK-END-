@@ -44,13 +44,7 @@ app.use('/', seoRoutes);
 // Enable CORS
 // ...
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || origin.includes('vercel.app') || origin.includes('railway.app') || origin.includes('localhost')) {
-      callback(null, true);
-    } else {
-      callback(null, true); 
-    }
-  },
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true,
